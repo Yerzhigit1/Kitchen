@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% comment %} {% block title %}
+{{ title }}
+{% endblock title %} {% endcomment %}
+
+{% block content %}
+        <!-- Main body-->
+        <main>
+            <h2>Кулинарный портал</h2>
+            <div class="d-flex justify-content-between">
+                <div class="col-3">
+                    <!-- Sidebar-->
+                    <div class="list-group">
+                        {% for category in categories %}
+                            <a href="#" class="list-group-item list-group-item-action">{{ category.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Posts-->
+                <div class="col-8">
+                    <!-- Post-->
+                     {% for post in posts %}
+                        <div class="card text-center"><div class="card-header">Категория: {{post.category.name}}</div>
+                            <div class="card-body"><h5 class="card-title">{{ post.title }}</h5><p class="card-text">{{ post.content|truncatewords:30 }}</p><a href="#" class="btn btn-primary">Прочитать</a></div>
+                            <div class="card-footer text-muted">{{ post.updated_at }}</div>
+                        </div> 
+                     {% endfor %}
+            </div>
+        </main>
+
+{% endblock content %}

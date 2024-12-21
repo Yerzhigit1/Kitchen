@@ -1,0 +1,47 @@
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+class Post(models.Model):
+    title = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True)
+    photo = models.ImageField(upload_to='photo/%y/%m/%d', blank=True, null=True)
+    # author = models.ForeignKey('CustomUser', on_delete=models.SET_NULL)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='posts')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    available = models.BooleanField(default=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Post'
+        verbose_name_plural = 'Posts'
+        
+    def __str__(self):
+        return self.title
+    
+    def get_absolute_url(self):
+        return reverse("detail", kwargs={"slug": self.slug})
+    
+        
+        
+class Category(models.Model):
+    name= models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return reverse('category', kwargs={"slug": self.slug})
+    
+    
+# class CustomUser(AbstractUser):
+#     birth_date = models.DateField(blank=True, null=True)
+#     phonenumber = models.CharField(max_length=15, blank=True) 
+#     avatar = models.ImageField(upload_to='avatars/', blank=True)
+
+#     def __str__(self):
+#         return self.username
