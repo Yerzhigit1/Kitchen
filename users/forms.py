@@ -55,3 +55,40 @@ class RegisterForm(UserCreationForm):
         return email
         
     
+class UserUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            'first_name',
+            'last_name',
+            'phonenumber',
+            'address',
+            'image',
+        ]
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Имя',
+                'autofocus': True
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Фамилия',
+                'autofocus': True
+            }),
+            'phonenumber': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Номер телефона',
+                'autofocus': True
+            }),
+            'address': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Адрес',
+                'autofocus': True
+            }),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*',  # Ограничивает выбор только изображений
+            }),
+        }
