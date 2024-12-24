@@ -35,7 +35,7 @@ class Category(models.Model):
         return self.name
     
     def get_absolute_url(self):
-        return reverse('category', kwargs={"slug": self.slug})
+        return reverse('main:category', kwargs={"category_slug": self.slug})
     
     
 # class CustomUser(AbstractUser):

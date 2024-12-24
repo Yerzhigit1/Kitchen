@@ -1,16 +1,8 @@
 from django.urls import path
-from main.views import IndexView, index, category_view
-from kitchen import settings
-from django.conf.urls.static import static
-
+from main import views
 app_name = 'main'
 
 urlpatterns = [
-    # path('', IndexView.as_view(), name='index'),
-    path('', index, name='index'),
-    path('category/<slug:category_slug>', category_view, name='category')
-    
+    path('', views.index, name='index'),
+    path('category/<slug:category_slug>', views.index, name='category'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,16 +7,21 @@
 
 {% block content %}
         <!-- Main body-->
-        <main>
             <h2>Кулинарный портал</h2>
             <div class="d-flex justify-content-between">
                 <div class="col-3">
-                    <!-- Sidebar-->
-                    <div class="list-group">
-                        {% for category in categories %}
-                            <a href="#" class="list-group-item list-group-item-action">{{ category.name }}</a>
+                    <!-- Sidebar -->
+                    <ul class="list-group">
+                        <li class="list-group-item {% if not category %}selected{% endif %}">
+                            <a href="{% url 'main:index' %}">Главная</a>
+                        </li>
+                        {% for c in categories %}
+                            <li class="list-group-item {% if c.slug == category.slug %}selected{% endif %}">
+                                <a href="{{ c.get_absolute_url }}" class="list-group-item-action">{{ c.name }}</a>
+                            </li>
                         {% endfor %}
-                    </div>
+                    </ul>
+                    
                 </div>
                 <!-- Posts-->
                 <div class="col-8">
@@ -28,6 +33,5 @@
                         </div> 
                      {% endfor %}
             </div>
-        </main>
 
 {% endblock content %}
