@@ -3,8 +3,8 @@ from main.models import Category, Post
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    fields = ['title', 'slug', 'category', 'content', 'photo', 'available']
-    list_display = ['title', 'content', 'category', 'created_at', 'available']
+    fields = ['title', 'author','slug', 'category', 'content', 'photo', 'available']
+    list_display = ['title', 'author', 'content', 'category', 'created_at', 'available']
     list_editable = ['available']
     prepopulated_fields = {'slug': ('title',)}
     

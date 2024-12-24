@@ -26,6 +26,13 @@ def index(request, category_slug=None):
     return render(request, 'main/index.html', data)
 
 
+def detail_page(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    data = {
+        'post': post
+    }
+    return render(request, 'main/detail_page.html', data)
+
 # def category_view(request, category_slug):
 #     posts_by_cat = Post.objects.filter(category__slug=category_slug)
 #     category = Category.objects.filter(slug=category_slug)

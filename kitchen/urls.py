@@ -16,14 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from main import urls as main_urls
 from kitchen import settings
 from django.conf.urls.static import static
+
+from main import urls as main_urls
+from users import urls as users_urls
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(main_urls, namespace='main')),
+    path('users/', include(users_urls, namespace='users'))
 ]
 
 if settings.DEBUG:
