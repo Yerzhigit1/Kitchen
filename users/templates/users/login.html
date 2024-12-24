@@ -8,7 +8,6 @@
                         <h2 class="text-center">Войти в аккаунт</h2>
                         <form action="" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="csrfmiddlewaretoken" value="641UKkkPe6PZgy91w6Roc3RvtNzVxAONBMtmI4iXtq4HltqdUNfzIqQI5oSX6elp">
                             <p>
                                 <label for="id_username">Имя пользователя:</label>
                                 <input type="text" name="username" class="form-control" maxlength="150" required id="id_username">
@@ -19,6 +18,9 @@
                             </p>
                             <button class="btn btn-dark" type="submit">Войти</button>
                         </form>
+                        <p class="text-center mt-3">
+                            <a href="#">Регистрация</a>
+                        </p>
                     </div>
                 </div>
             </div>
