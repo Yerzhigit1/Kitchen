@@ -6,8 +6,27 @@
                 <div class="card col-4 mb-4 mt-4">
                     <div class="card-body">
                         <h2 class="text-center">Войти в аккаунт</h2>
+                        {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                    <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                                        {{ message }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
                         <form action="" method="post">
                             {% csrf_token %}
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for field, errors in form.errors.items %}
+                                            <li>{{ field }}: {{ errors|join:", " }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                             <p>
                                 <label for="id_username">Имя пользователя:</label>
                                 <input type="text" name="username" class="form-control" maxlength="150" required id="id_username">
@@ -18,8 +37,9 @@
                             </p>
                             <button class="btn btn-dark" type="submit">Войти</button>
                         </form>
+                        
                         <p class="text-center mt-3">
-                            <a href="#">Регистрация</a>
+                            <a href="{% url "users:register" %}">Регистрация</a>
                         </p>
                     </div>
                 </div>

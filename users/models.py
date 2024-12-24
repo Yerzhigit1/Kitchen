@@ -1,6 +1,7 @@
 from email.mime import image
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.urls import reverse
 
 
 class CustomUser(AbstractUser):
@@ -9,5 +10,8 @@ class CustomUser(AbstractUser):
     address = models.CharField(max_length=100, blank=True, null=True)
     
     def __str__(self):
-        return self.get_full_name()
+        return self.username
+
+    def get_absolute_url(self):
+        return reverse("users:profile", kwargs={"pk": self.id})
     
