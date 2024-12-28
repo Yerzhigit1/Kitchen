@@ -26,4 +26,5 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'users/profile_update.html'
     success_url = reverse_lazy('main:index')
     
+
     

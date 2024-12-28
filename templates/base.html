@@ -38,7 +38,7 @@
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                                     <li><a class="dropdown-item" href="{{ user.get_absolute_url }}">Моя страница</a></li>
-                                                    <li><a class="dropdown-item" href="#!">Добавить статью</a></li>
+                                                    <li><a class="dropdown-item" href="{% url "main:add_post" %}">Добавить статью</a></li>
                                                     <li><hr class="dropdown-divider"></li>
                                                     <li><a class="dropdown-item" href="{% url "users:logout" %}">Выход</a></li>
                                                 </ul>

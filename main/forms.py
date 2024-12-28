@@ -7,15 +7,7 @@ from django.contrib.auth import authenticate, get_user_model, password_validatio
 from main.models import Post
 from users.models import CustomUser
 
-
 class PostCreateForm(forms.ModelForm):
-    
     class Meta:
         model = Post
-        fields = [
-            'title',
-            'photo',
-            'category',
-            'content',
-            'available'
-        ]
+        fields = ['title', 'content', 'photo', 'category']

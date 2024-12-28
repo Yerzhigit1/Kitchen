@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, Pass
 from django.db.models import Q
 from django.contrib.auth import authenticate, get_user_model, password_validation
 
+from main.models import Post
 from users.models import CustomUser
 
 
@@ -88,7 +89,12 @@ class UserUpdateForm(forms.ModelForm):
                 'autofocus': True
             }),
             'image': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-                'accept': 'image/*',  # Ограничивает выбор только изображений
+            'class': 'custom-file-input',  # Стили для файлового поля
+            'accept': 'image/*',           # Ограничение на загрузку только изображений
             }),
+
         }
+        
+
+
+        

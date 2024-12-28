@@ -9,6 +9,19 @@
                     <form action="" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% for field in form %}
+                            {% if field.name == "image" %}
+                            <div class="custom-file mb-4">
+                                {{ field }}
+                                <label class="custom-file-label" for="{{ field.id_for_label }}">
+                                    Выберите изображение
+                                </label>
+                                {% if field.errors %}
+                                    <div class="text-danger">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            {% else %}
                             <div class="form-floating flex-fill mb-4">
                                 {{ field }}
                                 <label for="{{ field.id_for_label }}">
@@ -21,6 +34,7 @@
                                     </div>
                                 {% endif %}
                             </div>
+                            {% endif %}
                         {% endfor %}
                         <button class="btn btn-dark" type="submit">Изменить</button>
                     </form>                    
