@@ -1,13 +1,14 @@
 from pdb import post_mortem
 from turtle import pos
 from unicodedata import category
+from django.db.models import Q
 from django.shortcuts import get_list_or_404, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.text import slugify
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from main.forms import PostCreateForm
+from main.forms import PostCreateForm, SearchForm, PostUpdateForm
 from .models import Post, Category
 
 # class IndexView(ListView):
@@ -75,7 +76,23 @@ class DetailPage(DetailView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Пост'
         return context
-
+    
+    
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = PostUpdateForm
+    templat_name  = 'main/update_post.html'
+    context_object_name = 'post'
+    model = Post
+    success_url = reverse_lazy('main:index')
+    
+    
+class DeletePostView(LoginRequiredMixin, DeleteView):
+    model = Post
+    pk_url_kwarg = 'post_id'
+    success_url = reverse_lazy('main:index')
+    template_name = 'main/delete_post.html'
+    context_object_name = 'post'
+    
 
 class PostAddView(LoginRequiredMixin, CreateView):
     form_class = PostCreateForm
@@ -92,3 +109,18 @@ class PostAddView(LoginRequiredMixin, CreateView):
         context['title'] = 'Добавить пост'
         context['categories'] = Category.objects.all()
         return context
+
+
+class SearchView(ListView):
+    template_name = 'main/index.html'
+    form_class = SearchForm
+    model = Post
+    context_object_name = 'posts'
+    paginate_by = 3
+    
+    def get_queryset(self):
+        form = self.form_class(self.request.GET)
+        if form.is_valid():
+            q = form.cleaned_data.get('q')
+            return Post.objects.filter(Q(title__icontains=q) | Q(content__icontains=q))
+        return Post.objects.none()

@@ -10,7 +10,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True)
     photo = models.ImageField(upload_to='photo/%y/%m/%d', blank=True, null=True)
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='author_posts')
     category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='posts')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -25,6 +25,9 @@
                 </div>
                 <!-- Posts-->
                 <div class="col-8">
+                    {% if request.GET.q %}
+                    <h5>Результаты поиска '{{ request.GET.q }}'</h5>
+                    {% endif %}
                     <!-- Post-->
                      {% for post in posts %}
                         <div class="card text-center"><div class="card-header">Категория: {{post.category.name}}</div>
