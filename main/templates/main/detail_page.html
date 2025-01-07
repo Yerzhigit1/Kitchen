@@ -6,11 +6,12 @@
         {% block content %}
             <div class="d-flex justify-content-between"><div class="col-8">
                 <div class="card"><div class="card-header d-flex justify-content-between">{{post.category.name}}
+                    {% if post.author.id == request.user.id %}
                     <div>
-                        <a href="#!" class="btn btn-dark">Удалить</a>
-                        <a href="#!" class="btn btn-dark">Изменить</a>
-                        <a href="#!" class="btn btn-dark">Назад</a>
+                        <a href="{% url "main:delete_post" post.id %}" class="btn btn-dark">Удалить</a>
+                        <a href="{% url "main:update_post" post.slug %}" class="btn btn-dark">Изменить</a>
                     </div>
+                    {% endif %}
                 </div>
                     <img src="{% if post.photo %}{{post.photo.url}}{% else %}https://www.raumplus.ru/upload/iblock/99e/Skoro-zdes-budet-foto.jpg{% endif %}" class="card-img-top" width="300" alt=""><div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>

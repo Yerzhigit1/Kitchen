@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+    <div class="container">
+        <!-- Main body-->
+        {% block content %}
+            <!-- Add post-->
+            <div class="d-flex justify-content-center">
+                <div class="card col-8 mb-4 mt-4">
+                    <div class="card-body">
+                        <h2 class="text-center">{{ title }}</h2>
+                        <form action="" method="post" enctype="multipart/form-data">
+                            <!--  Fields for filling-->
+                            <div>
+                                {% csrf_token %}
+                                <p>
+                                    <label for="id_title">Заголовок статьи:</label>
+                                    <input type="text" name="title" class="form-control" maxlength="255" required id="id_title" value="{{ post.title }}">
+                                </p>
+                                <p>
+                                    <label for="id_content">Текст статьи:</label>
+                                    <textarea name="content" cols="40" rows="10" class="form-control" required id="id_content"> {{ post.content }} </textarea>
+                                </p>
+                                <p>
+                                    <label for="id_photo">Изображения:</label>
+                                    <input type="file" name="photo" class="form-control" accept="image/*" id="id_photo">
+                                </p>
+                                <p>
+                                    <label for="id_category">Категория:</label>
+                                    <select name="category" class="form-control" required id="id_category" placeholder="{{ post.category }}">
+                                        {% for cat in categories %}
+                                        <option value="{{ cat.id }}" {% if cat == post.category %}selected{% endif %}>{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </p>
+                            </div>
+                            <button class="btn btn-dark" type="submit">Изменить статью</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div><div style="margin-top: 100px;"></div></div>
+        {% endblock content %}

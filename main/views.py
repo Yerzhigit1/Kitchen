@@ -80,13 +80,22 @@ class DetailPage(DetailView):
     
 class PostUpdateView(LoginRequiredMixin, UpdateView):
     form_class = PostUpdateForm
-    templat_name  = 'main/update_post.html'
+    template_name  = 'main/update_post.html'
     context_object_name = 'post'
     model = Post
-    success_url = reverse_lazy('main:index')
+    slug_url_kwarg = 'post_slug'
+    
+    def get_success_url(self):
+        return reverse_lazy('main:detail_page', kwargs={'post_slug': self.object.slug})
+    
+    def get_context_data(self, **kwargs) -> dict[str, any]:
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        return context
     
     
-class DeletePostView(LoginRequiredMixin, DeleteView):
+    
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     pk_url_kwarg = 'post_id'
     success_url = reverse_lazy('main:index')
