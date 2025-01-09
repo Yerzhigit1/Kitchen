@@ -54,3 +54,12 @@ class Category(models.Model):
 
 #     def __str__(self):
 #         return self.username
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments_for_posts')
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='comments_by_author')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Comment by {self.author} on {self.post.title[:20]}"

@@ -27,17 +27,23 @@
                 <hr>
 
                 <!--  reviews-->
-                <form action="#!" method="post" , enctype="multipart/form-data">
-                    <input type="hidden" name="csrfmiddlewaretoken" value="dVpvJs374bq08P5ZzKsB7pSNUnoJ6PXRIDRXHc1fjvFIdKmbXrQMDMR0wYHLFtut">
-                    <textarea name="text" cols="40" rows="10" class="form-control" placeholder="Текст вашего комментария" required id="id_text"></textarea>
+                <form action="" method="post" , enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
                     <button class="btn btn-dark" type="submit">Добавить комментарий</button>
                 </form>
-
-                <div class="card mt-2"><h5 class="card-header">Какой то человек</h5>
-                    <div class="card-body">
-                        <p class="card-text">Текст отзыва</p>
+                {% for comment in all_comments %}
+                    <div class="card mt-2">
+                        <h5 class="card-header d-flex justify-content-between">
+                            <span>{{ comment.author.username }}</span>
+                            <span class="text-muted small">{{ comment.created_at|timesince }} назад</span>
+                        </h5>
+                        <div class="card-body">
+                            <p class="card-text">{{ comment.content }}</p>
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
+
             </div>
             <!--  Recommendation-->
             <div class="col-1"></div>

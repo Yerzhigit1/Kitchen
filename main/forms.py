@@ -3,9 +3,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.db.models import Q
 from django.contrib.auth import authenticate, get_user_model, password_validation
-from django.forms import fields
+from django.forms import fields, widgets
 
-from main.models import Post
+from main.models import Comment, Post
 from users.models import CustomUser
 
 class PostCreateForm(forms.ModelForm):
@@ -29,3 +29,17 @@ class PostUpdateForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'photo', 'category']
+        
+        
+
+class PostComments(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Текст вашего комментария',
+                'rows': 4
+            })
+        }
