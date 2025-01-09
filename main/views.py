@@ -132,9 +132,26 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     pk_url_kwarg = 'post_id'
-    success_url = reverse_lazy('main:index')
-    template_name = 'main/delete_post.html'
+    # success_url = reverse_lazy('main:index')
+    template_name = None
     context_object_name = 'post'
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            current_post = self.get_object()
+            current_post.delete()
+            return JsonResponse({"success": True}, status=200)
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+    
+# @csrf_exempt
+# def delete_post_view(request, post_id):
+#     if request.method == "POST" and request.user.is_authenticated:
+#         post = get_object_or_404(Post, id=post_id)
+#         post.delete()
+#         return JsonResponse({"success": True}, status=200)
+#     return JsonResponse({"success": False}, status=400)    
     
     
 @csrf_exempt
