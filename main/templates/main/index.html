@@ -25,8 +25,12 @@
                 </div>
                 <!-- Posts-->
                 <div class="col-8">
-                    {% if request.GET.q %}
-                    <h5>Результаты поиска '{{ request.GET.q }}'</h5>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     {% endif %}
                     <!-- Post-->
                      {% for post in posts %}

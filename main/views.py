@@ -11,6 +11,8 @@ from django.utils.text import slugify
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 from main.forms import PostComments, PostCreateForm, SearchForm, PostUpdateForm
@@ -134,6 +136,16 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'main/delete_post.html'
     context_object_name = 'post'
     
+    
+@csrf_exempt
+def delete_comment_view(request, comment_id):
+    if request.method == "POST" and request.user.is_authenticated:
+        comment = get_object_or_404(Comment, id=comment_id, author=request.user)
+        comment.delete()
+        return JsonResponse({"success": True}, status=200)
+    return JsonResponse({"success": False}, status=400)
+    
+    
 
 class PostAddView(LoginRequiredMixin, CreateView):
     form_class = PostCreateForm
@@ -160,8 +172,14 @@ class SearchView(ListView):
     paginate_by = 3
     
     def get_queryset(self):
+        if not self.request.GET.get('q'):
+            return Post.objects.filter(available=True)
         form = self.form_class(self.request.GET)
         if form.is_valid():
             q = form.cleaned_data.get('q')
-            return Post.objects.filter(Q(title__icontains=q) | Q(content__icontains=q))
+            current_query = Post.objects.filter(Q(title__icontains=q) | Q(content__icontains=q))
+            if current_query.exists():
+                messages.info(self.request, f'Результаты поиска по запросу {q}')
+                return current_query
+            messages.info(self.request, f'По вашему запросу {q} ничего не найдено')
         return Post.objects.none()

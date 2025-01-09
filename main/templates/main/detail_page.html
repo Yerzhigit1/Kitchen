@@ -38,11 +38,19 @@
                             <span>{{ comment.author.username }}</span>
                             <span class="text-muted small">{{ comment.created_at|timesince }} назад</span>
                         </h5>
-                        <div class="card-body">
+                        <div class="card-body d-flex justify-content-between">
                             <p class="card-text">{{ comment.content }}</p>
+                            {% if request.user.id == comment.author.id %}
+                            <a href="#" 
+                                class="btn btn-dark" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#deleteModal" 
+                                data-id="{{ comment.id }}">Удалить</a>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
+                
 
             </div>
             <!--  Recommendation-->
@@ -70,5 +78,77 @@
                 </div>
             </div>
             </div>
+
+
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="deleteModalLabel">Удаление комментария</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Вы уверены, что хотите удалить этот комментарий?
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                      <button type="button" class="btn btn-danger" id="confirmDelete">Удалить</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  const deleteModal = document.getElementById("deleteModal");
+                  let deleteId = null;
+              
+                  // Сохраняем ID комментария при открытии модального окна
+                  deleteModal.addEventListener("show.bs.modal", (event) => {
+                    const button = event.relatedTarget; // Кнопка, вызвавшая модальное окно
+                    deleteId = button.getAttribute("data-id");
+                  });
+              
+                  // Обработка кнопки "Удалить"
+                  document.getElementById("confirmDelete").addEventListener("click", () => {
+                    if (deleteId) {
+                      fetch(`/delete_comment/${deleteId}/`, {
+                        method: "POST",
+                        headers: {
+                          "X-CSRFToken": getCookie("csrftoken"),
+                        },
+                      })
+                        .then((response) => {
+                          if (response.ok) {
+                            // Убираем комментарий из DOM
+                            document.querySelector(`[data-id="${deleteId}"]`).closest(".card").remove();
+                            // Закрываем модальное окно
+                            bootstrap.Modal.getInstance(deleteModal).hide();
+                          } else {
+                            alert("Ошибка при удалении.");
+                          }
+                        })
+                        .catch((error) => console.error("Ошибка:", error));
+                    }
+                  });
+              
+                  // Функция для получения CSRF-токена
+                  function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== "") {
+                      const cookies = document.cookie.split(";");
+                      for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith(`${name}=`)) {
+                          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                          break;
+                        }
+                      }
+                    }
+                    return cookieValue;
+                  }
+                });
+              </script>
+              
         {% endblock content %}
 

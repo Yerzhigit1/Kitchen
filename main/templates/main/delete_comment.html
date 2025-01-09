@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Кнопка удаления -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ object.id }}">
+    Удалить
+  </button>
+  
+  <!-- Модальное окно -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Удалить запись</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Вы уверены, что хотите удалить эту запись?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button type="button" class="btn btn-danger" id="confirmDelete">Удалить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock content %}
