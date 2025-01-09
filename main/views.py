@@ -54,6 +54,8 @@ class MainView(ListView):
             category = get_object_or_404(Category, slug=category_slug)
             queryset = queryset.filter(category=category)
             self.extra_context['category'] = category
+        else:
+            self.extra_context['category'] = None
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -82,6 +84,7 @@ class DetailPage(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Пост'
+        context['popular_posts'] = Post.objects.filter(available=True).order_by('-views', '-created_at')[:5]
         current_post = get_object_or_404(Post, slug=self.kwargs.get('post_slug'))
         if self.request.user.is_authenticated:
             current_author_comments = list(self.request.user.comments_by_author.filter(post=current_post).order_by('-created_at'))

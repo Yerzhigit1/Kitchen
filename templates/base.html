@@ -13,13 +13,13 @@
 <body>
     <div class="container">
         <header>
-            <div class="container">
+            
                 <!--   Header-->
                 {% block header %}
                     <nav class="navbar navbar-expand-lg bg-light">
                         <div class="container-fluid">
-                            <a class="navbar-brand" href="#!">
-                                <img src="#!" width="75" alt="">
+                            <a class="navbar-brand" href="{% url "main:index" %}">
+                                <img src="{% static "main/images/somelogo.png" %}" width="50" alt="">
                             </a>
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"  aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации"><span class="navbar-toggler-icon"></span></button>
                             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -56,7 +56,7 @@
                         </div>
                     </nav>
                 {% endblock header %}
-            </div>
+            
         </header>
         <!-- Main body-->
         <main>
