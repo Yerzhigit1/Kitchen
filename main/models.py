@@ -2,7 +2,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.text import slugify
+from pytils.translit import slugify
 
 from users.models import CustomUser
 
@@ -16,17 +16,22 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     available = models.BooleanField(default=True)
+    views = models.PositiveIntegerField(default=0)
+    
     
     class Meta:
         ordering = ['-created_at']
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
         
+        
     def __str__(self):
         return self.title
     
+    
     def get_absolute_url(self):
         return reverse("main:detail_page", kwargs={"post_slug": self.slug})
+    
     
     def save(self, *args, **kwargs):
         if not self.slug:

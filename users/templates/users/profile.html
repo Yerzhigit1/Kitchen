@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_tags %}
         <!-- Main body-->
         {% block content %}
           <div class="container">
@@ -133,69 +134,101 @@
               </div>
             </div>
           </div>
+
+          {% show_messages messages %}
           
           <script>
             document.addEventListener("DOMContentLoaded", () => {
-              const deletePostModal = document.getElementById("deletePostModal");
-              let deleteId = null;
-
-                // Предотвращение перенаправления при клике на кнопку "Удалить"
-              document.querySelectorAll('[data-bs-target="#deletePostModal"]').forEach((button) => {
-                button.addEventListener("click", (event) => {
-                  event.stopPropagation();
+                const deletePostModal = document.getElementById("deletePostModal");
+                const toastContainer = document.getElementById("toast-container");
+                let deleteId = null;
+        
+                // Сохраняем ID поста при открытии модального окна
+                deletePostModal.addEventListener("show.bs.modal", (event) => {
+                    const button = event.relatedTarget; // Кнопка, вызвавшая модальное окно
+                    deleteId = button.getAttribute("data-id"); // Сохраняем ID поста
                 });
-              });
-
-              function getCSRFToken() {
-                const meta = document.querySelector('meta[name="csrf-token"]');
-                return meta ? meta.getAttribute("content") : null;
-            }
-          
-              // Сохраняем ID комментария при открытии модального окна
-              deletePostModal.addEventListener("show.bs.modal", (event) => {
-                const button = event.relatedTarget; // Кнопка, вызвавшая модальное окно
-                deleteId = button.getAttribute("data-id");
-              });
-          
-              // Обработка кнопки "Удалить"
-              document.getElementById("confirmDelete").addEventListener("click", () => {
-                if (deleteId) {
-                  fetch(`/post/delete/${deleteId}/`, {
-                    method: "POST",
-                    headers: {
-                      "X-CSRFToken": getCookie("csrftoken"),
-                    },
-                  })
-                    .then((response) => {
-                      if (response.ok) {
-                        // Убираем комментарий из DOM
-                        document.querySelector(`[data-id="${deleteId}"]`).closest(".card").remove();
-                        // Закрываем модальное окно
-                        bootstrap.Modal.getInstance(deletePostModal).hide();
-                      } else {
-                        alert("Ошибка при удалении.");
-                      }
-                    })
-                    .catch((error) => console.error("Ошибка:", error));
-                }
-              });
-          
-              // Функция для получения CSRF-токена
-              function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== "") {
-                  const cookies = document.cookie.split(";");
-                  for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.startsWith(`${name}=`)) {
-                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                      break;
+        
+                // Предотвращение автоматического перехода на страницу поста
+                document.querySelectorAll('[data-bs-target="#deletePostModal"]').forEach((button) => {
+                    button.addEventListener("click", (event) => {
+                        event.preventDefault(); // Отменяем стандартное действие
+                        event.stopPropagation(); // Предотвращаем всплытие события
+                    });
+                });
+        
+                // Обработка кнопки "Удалить"
+                document.getElementById("confirmDelete").addEventListener("click", () => {
+                    if (deleteId) {
+                        fetch(`/post/delete/${deleteId}/`, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCookie("csrftoken"), // Добавляем CSRF-токен
+                            },
+                        })
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error("Ошибка при удалении поста");
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            if (data.success) {
+                                // Удаляем пост из DOM
+                                const postElement = document.querySelector(`[data-id="${deleteId}"]`);
+                                if (postElement) {
+                                    postElement.closest(".card").remove();
+                                }
+        
+                                // Закрываем модальное окно
+                                bootstrap.Modal.getInstance(deletePostModal).hide();
+        
+                                // Показываем уведомление (тост)
+                                showToast(data.message, "success");
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Ошибка:", error);
+                            showToast("Не удалось удалить пост", "danger");
+                        });
                     }
-                  }
+                });
+        
+                // Функция для отображения тоста
+                function showToast(message, type) {
+                    const toastHtml = `
+                        <div class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">${message}</div>
+                                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    `;
+                    toastContainer.insertAdjacentHTML("beforeend", toastHtml); // Добавляем новый тост
+                    const newToast = toastContainer.lastElementChild; // Последний добавленный тост
+                    const toastInstance = new bootstrap.Toast(newToast, { delay: 5000 });
+                    toastInstance.show(); // Показываем тост
                 }
-                return cookieValue;
-              }
+        
+                // Функция для получения CSRF-токена
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== "") {
+                        const cookies = document.cookie.split(";");
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.startsWith(`${name}=`)) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
             });
-          </script>
+        </script>
+        
+        
+          
         {% endblock content %}
         <!-- Footer-->

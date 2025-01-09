@@ -25,20 +25,53 @@
                 </div>
                 <!-- Posts-->
                 <div class="col-8">
-                    {% if messages %}
+                    {% comment %} {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }}">
                                 {{ message }}
                             </div>
                         {% endfor %}
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                     <!-- Post-->
                      {% for post in posts %}
                         <div class="card text-center"><div class="card-header">Категория: {{post.category.name}}</div>
-                            <div class="card-body"><h5 class="card-title">{{ post.title }}</h5><p class="card-text">{{ post.content|truncatewords:30 }}</p><a href="{{ post.get_absolute_url }}" class="btn btn-primary">Прочитать</a></div>
-                            <div class="card-footer text-muted">{{ post.updated_at }}</div>
+                            <div class="card-body" onclick="incrementViews({{ post.id }})"><h5 class="card-title">{{ post.title }}</h5><p class="card-text">{{ post.content|truncatewords:30 }}</p><a href="{{ post.get_absolute_url }}" class="btn btn-primary">Прочитать</a></div>
+                            <div class="card-footer d-flex text-muted justify-content-between">
+                                <p>{{ post.updated_at }}</p>
+                                <p>Просмотры: {{ post.views }}</p>
+                            </div>
                         </div> 
                      {% endfor %}
             </div>
-
+            <script>
+                function incrementViews(postId) {
+                    fetch(`/post/${postId}/increment_views/`, {
+                        method: "GET",  // Используем GET, так как это просто запрос на увеличение счетчика
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Обновляем отображаемое количество просмотров
+                        document.getElementById(`views-${postId}`).textContent = data.views;
+                    })
+                    .catch(error => console.error('Ошибка:', error));
+                }
+                
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== "") {
+                        const cookies = document.cookie.split(";");
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.startsWith(`${name}=`)) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+            </script>
 {% endblock content %}

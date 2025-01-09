@@ -4,7 +4,7 @@ from unicodedata import category
 from urllib import request
 from urllib.parse import urlencode
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Q, F
 from django.shortcuts import get_list_or_404, get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
@@ -140,9 +140,11 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
         try:
             current_post = self.get_object()
             current_post.delete()
-            return JsonResponse({"success": True}, status=200)
+            messages.success(request, 'Пост успешно удален')
+            return JsonResponse({"success": True, "message":"Пост успешно удален"}, status=200)
         except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=500)
+            messages.error(request, f'Ошибка: {e}')
+            return JsonResponse({"success": False, "error": "Ошибка!"}, status=500)
 
     
 # @csrf_exempt
@@ -200,3 +202,10 @@ class SearchView(ListView):
                 return current_query
             messages.info(self.request, f'По вашему запросу {q} ничего не найдено')
         return Post.objects.none()
+    
+    
+def increment_views(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.views = F('views') + 1
+    post.save()
+    return JsonResponse({'views': post.views}, status=200)
